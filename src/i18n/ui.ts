@@ -24,7 +24,7 @@ export const ui = {
     aboutBody: 'PRIME Lab 依托新疆大学计算机科学与技术学院，由苏雷副教授指导，聚焦工业建模与能源预测。我们以工业能源系统为研究对象，围绕深度学习建模、时序预测、物理机理与数据融合展开研究。',
     researchTitle: '连接机理、数据与预测', featured: '代表性成果', latest: '实验室动态',
     joinTitle: '让好奇心，\n与真实问题相遇。', joinBody: '欢迎关注工业建模、能源预测及深度学习的同学了解我们的研究方向。具体招生信息以正式发布为准。',
-    illustration: '工业能源预测概念示意，曲线为视觉表达，不代表实验数据。',
+    illustration: '工业能源建模与预测主题图。',
     contact: '联系与招生', email: '联系邮箱', address: '办公地址', unannounced: '待公布', admissions: '招生信息',
     openSource: '开放资源', openSourceBody: '公开代码和可复用资源将在课题组 GitHub 组织中发布。',
     updatedSoon: '相关资料将在确认后更新。', imagePending: '照片待提供', noTranslation: '此条目尚未提供中文版本，以下保留原始内容。',

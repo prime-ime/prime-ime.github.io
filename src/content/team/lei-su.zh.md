@@ -29,8 +29,6 @@ website: https://it.xju.edu.cn/info/1144/3136.htm
 
 ## 主持项目
 
-目前本站收录以下四项主持课题。点击项目名称可在本站查看资助类别、执行期限、经费及已公开编号。
-
 - [沙尘暴灾害下数据中心集群的算电协同应急响应策略](/projects/tianchi-computing-energy/)
 - [虚假数据对多能流优化调度的影响机理及其检测算法](/projects/nsfc-multienergy-dispatch/)
 - [跨能源协同虚假数据注入攻击建模与检测方法研究](/projects/postdoc-cross-energy-attacks/)
@@ -48,7 +46,3 @@ website: https://it.xju.edu.cn/info/1144/3136.htm
 招收计算机科学与技术、计算机技术专业硕士研究生。重视从具体科研问题出发培养研究能力，鼓励学生在选定方向持续深入。
 
 公开工作邮箱：[sul@xju.edu.cn](mailto:sul@xju.edu.cn)。招生专业、研究方向及联系建议见本站[加入我们](/join/)。
-
----
-
-教师履历、项目、人才计划与荣誉依据学院公开资料整理，核对日期：2026 年 11 月 16 日。照片来源于学院主页。
