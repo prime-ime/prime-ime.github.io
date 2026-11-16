@@ -6,7 +6,7 @@ Predictive Research in Industrial Modeling and Energy
 
 目标地址：https://prime-ime.github.io
 
-中文默认首页 `/`，英文首页 `/en/`。Astro 静态生成，GitHub Pages 托管，不需要数据库或服务器。
+网站仅提供中文版，首页 `/`；英文页面和语言切换入口已移除。Astro 静态生成，GitHub Pages 托管，不需要数据库或服务器。
 
 ## 本地开发
 
@@ -22,7 +22,7 @@ npm run dev
 ```bash
 npm run verify    # 类型检查、BibTeX 测试、生产构建、链接及资源检查
 npm run preview  # 预览 dist 中的完整网站，包含静态搜索
-npm run test:content # 可选：在临时目录验证非空的双语内容，不改正式资料
+npm run test:content # 可选：在临时目录验证非空内容，不改正式资料
 ```
 
 ## 内容放在哪里
@@ -30,7 +30,7 @@ npm run test:content # 可选：在临时目录验证非空的双语内容，不
 | 内容 | 位置 |
 | --- | --- |
 | 名称、简介、邮箱、办公地址、招生链接 | `src/config.ts` |
-| 导航、按钮、空状态及首页中英文文案 | `src/i18n/ui.ts` |
+| 导航、按钮、空状态及首页中文文案 | `src/i18n/ui.ts` |
 | 研究方向 | `src/content/research/*.md` |
 | 导师、博士生、硕士生、毕业成员 | `src/content/team/*.md` |
 | 项目与资源 | `src/content/projects/*.md` |
@@ -40,19 +40,19 @@ npm run test:content # 可选：在临时目录验证非空的双语内容，不
 | 下载文件 | `public/files/`（链接写 `/files/文件名.pdf`） |
 | 组件、统一样式 | `src/components/`、`src/styles/global.css` |
 
-已收录苏雷老师的双语简介、官网照片、公开工作邮箱，以及经 PDF 和 Crossref 核实的四篇 2026 年论文。学生个人资料、科研项目和新闻尚待补充，因此相应栏目保留空状态。空集合在 Astro 构建日志中会产生提示，这是无资料状态下的预期行为，不影响构建。请只发布经核实的资料，并取得照片及个人联系方式的公开许可。研究方向是介绍性文字，不代表已完成项目或验证过的成果。
+已收录苏雷老师的中文简介、官网照片、公开工作邮箱，以及经 PDF 和 Crossref 核实的四篇 2026 年论文。另已收录苏雷老师主持的四项科研项目。学生个人资料和新闻尚待补充，因此相应栏目保留空状态。空集合在 Astro 构建日志中会产生提示，这是无资料状态下的预期行为，不影响构建。请只发布经核实的资料，并取得照片及个人联系方式的公开许可。研究方向是介绍性文字，不代表已完成项目或验证过的成果。
 
-### 双语规则
+### 内容规则
 
-同一内容使用两个文件，例如 `energy.zh.md`、`energy.en.md`。分别设置 `lang: zh` / `lang: en`，但 `translationKey` 完全一致。`translationKey` 只用小写英文、数字和短横线，同时决定详情页网址，发布后尽量不改。
+网站只发布中文内容，`lang` 固定为 `zh`，也可省略（默认中文）。每条内容使用一个 Markdown 文件，例如 `energy.zh.md`。现有 `translationKey` 字段保留为详情页的唯一网址标识，只用小写英文、数字和短横线；已发布的标识尽量不改。无需创建英文文件。
 
-两种语言分别生成完整 HTML，不依赖浏览器即时翻译。列表只显示当前语言的条目；尚未创建翻译时，详情页语言切换返回另一语言的栏目首页。请一起维护中英文文件。论文保持原始题名和作者，共用于双语页面。
+论文保留原始英文题名、作者姓名及期刊名称，方便检索和引用。课题组英文全称、品牌文字和技术术语仍可用于中文页面的视觉设计。
 
 添加 `draft: true` 可隐藏尚未确认的条目；省略时默认发布。Markdown 正文是详情页内容；列表摘要来自 frontmatter。
 
 ## 添加成员
 
-在 `src/content/team/` 新建 `member-key.zh.md`，将以下占位字段替换为真实信息后再改为 `draft: false`。英文文件保持相同 `translationKey`。
+在 `src/content/team/` 新建 `member-key.zh.md`，将以下占位字段替换为真实信息后再改为 `draft: false`。
 
 ```yaml
 ---
@@ -102,7 +102,7 @@ npm run import-bibtex
 
 ## 发布新闻
 
-在 `src/content/news/` 新建 `news-key.zh.md`，并提供英文版本：
+在 `src/content/news/` 新建 `news-key.zh.md`：
 
 ```yaml
 ---
@@ -121,7 +121,7 @@ summary: 待填写一至两句摘要
 
 ## 更新项目与研究方向
 
-研究方向可直接复制当前中英文 Markdown 修改。项目在 `src/content/projects/` 新建双语文件：
+研究方向可直接复制当前中文 Markdown 修改。项目在 `src/content/projects/` 新建中文文件：
 
 ```yaml
 ---
@@ -158,7 +158,7 @@ links: {}
 
 ## 技术与来源
 
-基于 [Scholar-Lite](https://github.com/fjd2004711/scholar-lite)，来源提交 `f43e9de7672ad90f7d8bddbd825b466cae8d9ef5`。保留其 Astro 目录习惯、Markdown 内容集合、BibTeX → Markdown 流程、Pagefind 静态搜索及组件化页面思想；针对 PRIME Lab 重做视觉与双语静态路由，修复导入删除同步，并移除演示数据及未使用的成果栏目。
+基于 [Scholar-Lite](https://github.com/fjd2004711/scholar-lite)，来源提交 `f43e9de7672ad90f7d8bddbd825b466cae8d9ef5`。保留其 Astro 目录习惯、Markdown 内容集合、BibTeX → Markdown 流程、Pagefind 静态搜索及组件化页面思想；针对 PRIME Lab 重做视觉与静态路由，修复导入删除同步，并移除演示数据及未使用的成果栏目。
 
 上游 README 标称 Astro 6，但该提交实际依赖为 Astro 5；本项目基于该源码完成定制，并因已公布的依赖漏洞将构建链升级到 Astro 7.4.12、配套 React 集成及 Sharp 0.35.5（实际解析版本由锁文件固定）。迁移遵循 [Astro 官方升级指南](https://docs.astro.build/en/guides/upgrade-to/v7/)，保留内容集合与静态页面结构。React 仅用于构建期渲染原模板使用的 Lucide 图标，没有客户端 React hydration。交互仅包含轻量移动导航和按需加载的 Pagefind 搜索。首页 SVG 是自制概念示意，不是实际实验结果。
 
@@ -173,3 +173,5 @@ links: {}
 - TII 记录目前为 Early Access，尚无正式卷期；后续确定卷期后更新 `citations.bib`。四篇论文均设为首页代表性成果。
 - 论文按钮指向出版社页面，代码按钮采用论文原文给出的公开仓库。本站未重新分发出版社 PDF。教师照片仅用于本人学术简介，不属于网站代码的 MIT 授权范围。
 - 未将目录中的 AAAI、TIM 文稿纳入已发表列表；学生学位类别、在读或毕业状态需另行确认后再添加成员资料。
+
+- 科研项目依据学院主页“主持项目”栏目收录四项，保留原项目名称、类别、经费、期限及已公开编号；“参与项目”未纳入主持列表。

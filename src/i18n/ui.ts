@@ -1,4 +1,4 @@
-export type Lang = 'zh' | 'en';
+export type Lang = 'zh';
 export const defaultLang: Lang = 'zh';
 export const ui = {
   zh: {
@@ -31,37 +31,7 @@ export const ui = {
     openSource: '开放资源', openSourceBody: '公开代码和可复用资源将在课题组 GitHub 组织中发布。',
     updatedSoon: '相关资料将在确认后更新。', imagePending: '照片待提供', noTranslation: '此条目尚未提供中文版本，以下保留原始内容。',
   },
-  en: {
-    home: 'Home', research: 'Research', publications: 'Publications', people: 'People', projects: 'Projects', news: 'News', join: 'Join us', search: 'Search',
-    all: 'View all', explore: 'Explore our research', learn: 'Learn more', back: 'Back to overview', skip: 'Skip to main content', menu: 'Navigation menu',
-    researchIntro: 'Connecting physical understanding with data and intelligence in industrial systems.',
-    publicationsIntro: 'Research at the intersection of industrial modeling, energy forecasting, and artificial intelligence.',
-    peopleIntro: 'Bringing industrial questions and intelligent methods together for more trustworthy predictions.',
-    projectsIntro: 'Exploring the path from modeling methods to applications in industrial energy systems.',
-    newsIntro: 'Research progress, academic exchanges, and news from the lab.',
-    joinIntro: 'Interested in the intersection of industrial energy and artificial intelligence? Explore with us.',
-    searchIntro: 'Find research topics, publications, people, and updates from the lab.',
-    pending: 'COMING SOON', emptyPapers: 'Publications are being curated', emptyPapersBody: 'Verified publications and related resources will be listed here by year.',
-    emptyFeatured: 'Selected work is coming soon', emptyFeaturedBody: 'Confirmed publications and research outputs will be featured here.',
-    emptyProjects: 'Projects are being curated', emptyProjectsBody: 'Project descriptions, technical outcomes, and public resources will follow once confirmed.',
-    emptyNews: 'Updates are coming soon', emptyNewsBody: 'Paper acceptances, talks, and research progress will be shared here.',
-    emptyPeople: 'People will be announced', emptyPeopleBody: 'Confirmed member profiles, photographs, and personal websites will appear here.',
-    faculty: 'Faculty', phd: 'PhD students', master: 'Master’s students', alumni: 'Alumni',
-    paper: 'Paper', code: 'Code', website: 'Project', profile: 'Personal website', bib: 'Cite BibTeX', download: 'Download BibTeX',
-    future: 'Intelligence for\na changing energy world.', heroLead: 'Understand industry.\nAnticipate energy.',
-    heroBody: 'We study modeling and forecasting in industrial energy systems, bringing deep learning and physical understanding together through data and domain knowledge.',
-    aboutLabel: 'ABOUT PRIME', aboutTitle: 'Grounded in physics.\nDriven by inquiry.',
-    aboutBody: 'PRIME Lab is led by Associate Professor Lei Su at the School of Computer Science and Technology, Xinjiang University, with a focus on industrial modeling and energy forecasting. Our interests span deep learning, time-series prediction, and the integration of physical mechanisms with data-driven models.',
-    researchTitle: 'Physics. Data. Prediction.', featured: 'Selected research', latest: 'From the lab',
-    joinTitle: 'Where curiosity meets\nreal-world questions.', joinBody: 'Explore our research if you are interested in industrial modeling, energy forecasting, or deep learning. Specific opportunities will be announced through official channels.',
-    illustration: 'Conceptual illustration of industrial energy forecasting. Curves are illustrative, not experimental data.',
-    contact: 'Contact & admissions', email: 'Email', address: 'Office', unannounced: 'To be announced', admissions: 'Admissions',
-    admissionNotice: 'Associate Professor Lei Su supervises master’s students in Computer Science and Technology and Computer Technology. Contact him through the public work email below. Positions, deadlines, and requirements follow the university’s official admissions announcements.',
-    preparation: 'Explore our research', preparationBody: 'Start with our research directions and the industrial questions that interest you. Published papers and available code can be found on the Publications page.',
-    openSource: 'Open resources', openSourceBody: 'Public code and reusable resources will be shared through our GitHub organization.',
-    updatedSoon: 'Details will be updated once confirmed.', imagePending: 'Photo forthcoming', noTranslation: 'An English version is not yet available. Original content is shown below.',
-  },
 } as const;
 export function t(lang: Lang) { return ui[lang]; }
-export function href(lang: Lang, path = '') { return `${lang === 'en' ? '/en/' : '/'}${path ? path.replace(/^\/+|\/+$/g, '') + '/' : ''}`; }
+export function href(_lang: Lang, path = '') { return `/${path ? path.replace(/^\/+|\/+$/g, '') + '/' : ''}`; }
 export function local<T extends { lang: Lang }>(entries: Array<{ data: T }>, lang: Lang) { return entries.filter(e => e.data.lang === lang); }

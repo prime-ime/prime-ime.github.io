@@ -3,7 +3,7 @@ import { z } from 'astro/zod';
 import { glob } from 'astro/loaders';
 // Content keeps Scholar-Lite's Markdown collections and frontmatter conventions.
 const link = z.string().refine(v => /^https?:\/\//.test(v) || /^\/(?!\/)/.test(v), 'Use an https URL or a root-relative local path');
-const localized = { lang: z.enum(['zh', 'en']).default('zh'), translationKey: z.string().regex(/^[a-z0-9-]+$/), draft: z.boolean().default(false) };
+const localized = { lang: z.literal('zh').default('zh'), translationKey: z.string().regex(/^[a-z0-9-]+$/), draft: z.boolean().default(false) };
 const collection = (name: string) => glob({ pattern: '**/[^_]*.md', base: `./src/content/${name}` });
 const research = defineCollection({ loader: collection('research'), schema: z.object({ ...localized, title: z.string(), description: z.string(), order: z.number().default(100), label: z.string(), tags: z.array(z.string()).default([]) }) });
 const news = defineCollection({ loader: collection('news'), schema: z.object({ ...localized, title: z.string(), date: z.coerce.date(), summary: z.string(), category: z.string().optional() }) });

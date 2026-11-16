@@ -2,10 +2,9 @@
 import { SITE, sections, type Section } from '../config';
 import { href, t, type Lang } from '../i18n/ui';
 import { Search, Menu, ArrowUpRight } from 'lucide-react';
-interface Props { lang: Lang; section?: Section; alternate?: string }
-const { lang, section = 'home', alternate } = Astro.props;
+interface Props { lang: Lang; section?: Section }
+const { lang, section = 'home' } = Astro.props;
 const u = t(lang);
-const other = lang === 'zh' ? 'en' : 'zh';
 ---
 <header class="site-header">
   <div class="container header-inner">
@@ -18,7 +17,6 @@ const other = lang === 'zh' ? 'en' : 'zh';
     </nav>
     <div class="header-tools">
       <a class="search-link" href={href(lang, 'search')} aria-label={u.search}><Search size={19} /></a>
-      <a class="lang-switch" href={alternate ?? href(other, section === 'home' ? '' : section)} lang={other} hreflang={other === 'zh' ? 'zh-CN' : 'en'}>{lang === 'zh' ? 'EN' : '中文'}</a>
       <button id="menu-toggle" class="menu-toggle" aria-label={u.menu} aria-expanded="false" aria-controls="mobile-nav"><Menu size={22} /></button>
     </div>
   </div>

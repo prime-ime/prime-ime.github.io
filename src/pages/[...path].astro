@@ -5,10 +5,10 @@ import Page from '../components/Page.astro';
 import Layout from '../layouts/Layout.astro';
 import { sections, type Section } from '../config';
 import { href, t, type Lang } from '../i18n/ui';
-interface Props { lang: Lang; section: Section; entry?: CollectionEntry<'research'|'team'|'projects'|'news'>; alternate?: string }
+interface Props { lang: Lang; section: Section; entry?: CollectionEntry<'research'|'team'|'projects'|'news'> }
 export async function getStaticPaths() {
   const paths: {params:{path:string};props:Props}[] = [];
-  for (const lang of ['zh','en'] as const) {
+  for (const lang of ['zh'] as const) {
     for (const section of ['home',...sections] as const) {
       if (lang === 'zh' && section === 'home') continue;
       paths.push({params:{path:href(lang, section === 'home' ? '' : section).replace(/^\/+|\/+$/g,'')},props:{lang,section}});
@@ -23,20 +23,18 @@ export async function getStaticPaths() {
       const key = `${lang}/${translationKey}`;
       if(keys.has(key)) throw new Error(`Duplicate translationKey in ${collection}: ${key}`);
       keys.add(key);
-      const other = lang === 'zh' ? 'en' : 'zh';
-      const translated = entries.some(e => e.data.lang === other && e.data.translationKey === translationKey);
-      paths.push({params:{path:href(lang,`${section}/${translationKey}`).replace(/^\/+|\/+$/g,'')},props:{lang,section,entry,alternate:href(other,translated ? `${section}/${translationKey}` : section)}});
+      paths.push({params:{path:href(lang,`${section}/${translationKey}`).replace(/^\/+|\/+$/g,'')},props:{lang,section,entry}});
     }
   }
   return paths;
 }
-const {lang,section,entry,alternate} = Astro.props;
+const {lang,section,entry} = Astro.props;
 const rendered = entry ? await render(entry) : undefined;
 const Content = rendered?.Content;
 const title = entry ? ('title' in entry.data ? entry.data.title : entry.data.name) : '';
 const description = entry ? ('description' in entry.data ? entry.data.description : 'summary' in entry.data ? entry.data.summary : entry.data.bio) : '';
 ---
-{entry && Content ? <Layout lang={lang} title={title} description={description} section={section} alternate={alternate}>
+{entry && Content ? <Layout lang={lang} title={title} description={description} section={section}>
   <article class="container detail-page"><a class="text-link" href={href(lang,section)}>← {t(lang).back}</a><header><p class="eyebrow">{t(lang)[section]}</p><h1>{title}</h1>{'date' in entry.data && <time datetime={entry.data.date.toISOString()}>{entry.data.date.toISOString().slice(0,10)}</time>}<p class="detail-intro">{description}</p></header>
   {'avatar' in entry.data && entry.data.avatar && <Image src={entry.data.avatar} alt={title} width={320} class="detail-avatar" format="webp"/>}
   <div class="prose"><Content/></div>

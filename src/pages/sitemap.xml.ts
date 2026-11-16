@@ -3,7 +3,7 @@ import { SITE, sections } from '../config';
 import { href } from '../i18n/ui';
 export async function GET() {
   const urls: string[] = [];
-  for (const lang of ['zh','en'] as const) {
+  for (const lang of ['zh'] as const) {
     urls.push(href(lang), ...sections.filter(s => s !== 'search').map(s => href(lang,s)));
     for (const c of ['research','team','projects','news'] as const) {
       const entries = await getCollection(c);

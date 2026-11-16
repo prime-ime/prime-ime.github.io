@@ -3,11 +3,14 @@ import path from 'node:path';
 import assert from 'node:assert/strict';
 const root = path.resolve('dist');
 const files = fs.readdirSync(root,{recursive:true}).filter(p => p.endsWith('.html'));
+assert.ok(!fs.existsSync(path.join(root,'en')),'English output must be removed');
+assert.doesNotMatch(fs.readFileSync(path.join(root,'sitemap.xml'),'utf8'),/https:\/\/prime-ime.github.io\/en(?:\/|<)/);
 let links=0;
 for(const file of files) {
  const html=fs.readFileSync(path.join(root,file),'utf8');
+ assert.doesNotMatch(html, /hreflang=|class="lang-switch"|(?:href|src)="\/en(?:\/|")/,`${file}: English navigation must be removed`);
  assert.equal((html.match(/<h1(?:\s|>)/g)||[]).length,1,`${file}: expected one h1`);
- assert.match(html,/<html lang="(?:zh-CN|en)"/,`${file}: language`);
+ assert.match(html,/<html lang="zh-CN"/,`${file}: language`);
  assert.match(html,/<link rel="canonical" href="https:\/\/prime-ime.github.io\//,`${file}: canonical`);
  assert.doesNotMatch(html,/scholar-lite-demo|contact@lab\.edu|Sarah Johnson|GPT-4 Technical Report|University Name/,`${file}: demo content`);
  for(const [,raw] of html.matchAll(/(?:href|src)="([^"<>]+)"/g)) {
@@ -25,6 +28,6 @@ for(const file of files) {
   links++;
  }
 }
-for(const lang of ['', 'en/']) for(const route of ['', 'research/', 'publications/', 'people/', 'projects/', 'news/', 'join/', 'search/']) assert.ok(fs.existsSync(path.join(root,lang,route,'index.html')),`Missing ${lang}${route}`);
+for(const lang of ['']) for(const route of ['', 'research/', 'publications/', 'people/', 'projects/', 'news/', 'join/', 'search/']) assert.ok(fs.existsSync(path.join(root,lang,route,'index.html')),`Missing ${lang}${route}`);
 for(const required of ['og.png','sitemap.xml','robots.txt','pagefind/pagefind.js','publications.bib']) assert.ok(fs.existsSync(path.join(root,required)),`Missing ${required}`);
-console.log(`Static QA: ${files.length} pages, ${links} internal links/assets validated; all bilingual routes present.`);
+console.log(`Static QA: ${files.length} pages, ${links} internal links/assets validated; all Chinese routes present; English routes removed.`);
