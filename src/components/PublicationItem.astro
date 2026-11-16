@@ -1,0 +1,19 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { t, type Lang } from '../i18n/ui';
+import { ArrowUpRight } from 'lucide-react';
+interface Props { entry: CollectionEntry<'publications'>; lang: Lang }
+const { entry, lang } = Astro.props;
+const {title, authors, year, venue, links, doi, bibtex} = entry.data;
+const u = t(lang);
+---
+<article class="publication" id={entry.id}>
+  <div class="publication-index" aria-hidden="true">↗</div>
+  <div><div class="publication-meta">{venue} <span> / {year}</span></div><h3>{title}</h3><p>{authors.join(', ')}</p>
+    <div class="resource-links">
+      {Object.entries(links).map(([key, url]) => url && <a href={url}>{key === 'pdf' ? u.paper : key === 'code' ? u.code : u.website}<ArrowUpRight size={13}/></a>)}
+      {doi && <a href={`https://doi.org/${doi}`}>DOI <ArrowUpRight size={13}/></a>}
+    </div>
+    {bibtex && <details class="citation"><summary>{u.bib}</summary><pre><code>{bibtex}</code></pre></details>}
+  </div>
+</article>

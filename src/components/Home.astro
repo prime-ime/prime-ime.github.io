@@ -1,0 +1,44 @@
+---
+import { ArrowUpRight, ArrowRight } from 'lucide-react';
+import { SITE } from '../config';
+import { href, t, type Lang } from '../i18n/ui';
+import { getContent } from '../lib/content';
+import EnergyVisual from './EnergyVisual.astro';
+import ResearchCards from './ResearchCards.astro';
+import PublicationItem from './PublicationItem.astro';
+import EmptyState from './EmptyState.astro';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const u = t(lang);
+const {research, publications, news} = await getContent(lang);
+const featured = publications.filter(p => p.data.featured).slice(0,3);
+---
+<section class="hero">
+  <div class="container hero-grid">
+    <div class="hero-copy"><div class="hero-kicker"><span class="status-dot"></span> {SITE.university[lang]}<span class="kicker-divider">/</span> PRIME LAB</div>
+      <p class="hero-overline">MODELING TODAY. PREDICTING TOMORROW.</p>
+      <h1>{u.heroLead.split('\n').map((line, i) => <span class:list={{accent:i === 1}}>{line}</span>)}</h1>
+      <p class="hero-description">{u.heroBody}</p>
+      <div class="hero-actions"><a class="button button-mint" href={href(lang, 'research')}>{u.explore}<ArrowUpRight size={18}/></a><a class="hero-secondary" href={href(lang, 'publications')}>{u.publications}<ArrowRight size={17}/></a></div>
+    </div>
+    <EnergyVisual lang={lang}/>
+  </div>
+  <div class="container hero-bottom"><span>{SITE.fullName}</span><span class="scroll-label">SCROLL TO EXPLORE <span aria-hidden="true">↓</span></span></div>
+</section>
+<div class="topic-strip"><div class="container"><span>INDUSTRIAL ENERGY</span><i>+</i><span>DEEP LEARNING</span><i>+</i><span>PHYSICS-INFORMED MODELING</span><i>+</i><span>TIME-SERIES FORECASTING</span></div></div>
+<section class="section about-section container">
+  <div><span class="eyebrow"><span class="section-number">01 /</span> {u.aboutLabel}</span><h2 class="line-title">{u.aboutTitle}</h2></div>
+  <div class="about-copy"><p>{u.aboutBody}</p><a class="text-link" href={href(lang, 'people')}>{u.people}<ArrowUpRight size={17}/></a></div>
+</section>
+<section class="section research-section">
+  <div class="container"><div class="section-heading"><div><span class="eyebrow"><span class="section-number">02 /</span> RESEARCH DIRECTIONS</span><h2>{u.researchTitle}</h2></div><a class="text-link" href={href(lang, 'research')}>{u.all}<ArrowUpRight size={17}/></a></div><ResearchCards lang={lang} entries={research}/></div>
+</section>
+<section class="section container">
+  <div class="section-heading"><div><span class="eyebrow"><span class="section-number">03 /</span> SELECTED PUBLICATIONS</span><h2>{u.featured}</h2></div><a class="text-link" href={href(lang, 'publications')}>{u.publications}<ArrowUpRight size={17}/></a></div>
+  {featured.length ? featured.map(entry => <PublicationItem entry={entry} lang={lang}/>) : <EmptyState lang={lang} title={u.emptyFeatured} body={u.emptyFeaturedBody} link={href(lang, 'publications')} label={u.publications}/>}
+</section>
+<section class="section news-section container">
+  <div class="section-heading"><div><span class="eyebrow"><span class="section-number">04 /</span> NEWS & UPDATES</span><h2>{u.latest}</h2></div><a class="text-link" href={href(lang, 'news')}>{u.all}<ArrowUpRight size={17}/></a></div>
+  {news.length ? <div class="news-list">{news.slice(0,3).map(n => <a href={href(lang, `news/${n.data.translationKey}`)}><time datetime={n.data.date.toISOString()}>{n.data.date.toISOString().slice(0,10)}</time><h3>{n.data.title}</h3><ArrowUpRight size={20}/></a>)}</div> : <EmptyState lang={lang} title={u.emptyNews} body={u.emptyNewsBody} compact/>}
+</section>
+<section class="join-band"><div class="container join-grid"><div><span class="eyebrow">EXPLORE WITH US</span><h2 class="line-title">{u.joinTitle}</h2></div><div><p>{u.joinBody}</p><a class="button button-mint" href={href(lang, 'join')}>{u.join}<ArrowUpRight size={18}/></a></div></div></section>

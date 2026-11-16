@@ -1,0 +1,31 @@
+---
+import { t, type Lang } from '../i18n/ui';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const rows = Array.from({length: 19}, (_, i) => {
+  const y = 120 + i * 12;
+  return Array.from({length: 81}, (_, j) => {
+    const x = 25 + j * 6.5;
+    const envelope = Math.exp(-Math.pow((j - 40) / 23, 2));
+    const wave = Math.sin(j * .16 + i * .22) * 45 * envelope + Math.sin(j * .30 - i * .22) * 16;
+    return `${j === 0 ? 'M' : 'L'}${x.toFixed(1)},${(y + wave).toFixed(1)}`;
+  }).join(' ');
+});
+---
+<figure class="energy-visual" aria-label={t(lang).illustration}>
+  <div class="visual-top"><span><i></i> PHYSICS × DATA</span><span>PRIME / 01</span></div>
+  <svg viewBox="0 0 580 430" role="img" aria-labelledby="energy-title">
+    <title id="energy-title">{t(lang).illustration}</title>
+    <defs><linearGradient id="wave" x1="0" y1="0" x2="1" y2=".5"><stop stop-color="#4279a0" stop-opacity=".1"/><stop offset=".5" stop-color="#78e8cd"/><stop offset="1" stop-color="#76aaff" stop-opacity=".6"/></linearGradient><radialGradient id="halo"><stop stop-color="#24b7ac" stop-opacity=".14"/><stop offset="1" stop-color="#24b7ac" stop-opacity="0"/></radialGradient><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#294059" stroke-width=".6"/></pattern></defs>
+    <rect width="580" height="430" fill="url(#grid)" opacity=".45"/>
+    <ellipse cx="310" cy="225" rx="250" ry="200" fill="url(#halo)"/>
+    <g fill="none" stroke="url(#wave)" stroke-width="1.25" class="wave-field">{rows.map(d => <path d={d}/>)}</g>
+    <path d="M35 360H548 M35 360V70" stroke="#5b7288" stroke-width=".7" fill="none"/>
+    <path d="M410 80V362" stroke="#72e2c2" opacity=".4" stroke-dasharray="3 6"/>
+    <path d="M42 302C80 309 94 255 128 273S180 314 209 259S249 210 276 233S311 271 339 204S383 193 410 167" stroke="#d0f8eb" stroke-width="2.5" fill="none"/>
+    <path class="forecast-line" d="M410 167C435 141 448 185 474 143S518 112 547 99" stroke="#80eac6" stroke-width="2.5" stroke-dasharray="5 6" fill="none"/>
+    <circle cx="410" cy="167" r="6" fill="#83efce"/><circle cx="410" cy="167" r="13" fill="none" stroke="#83efce" opacity=".3"/>
+    <g font-family="monospace" font-size="10" fill="#a0b6cb"><text x="35" y="385">OBSERVATION</text><text x="426" y="385">PREDICTION →</text><text x="423" y="78" fill="#83efce">t + Δt</text><text x="36" y="55">ENERGY / DYNAMICS</text></g>
+  </svg>
+  <figcaption><span>INDUSTRIAL INTELLIGENCE</span><span>{lang === 'zh' ? '概念示意 · 非实验数据' : 'CONCEPTUAL VISUALIZATION'}</span></figcaption>
+</figure>

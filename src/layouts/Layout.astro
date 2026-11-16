@@ -1,0 +1,52 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import { SITE, type Section } from '../config';
+import { href, t, type Lang } from '../i18n/ui';
+interface Props { lang?: Lang; title?: string; description?: string; section?: Section; alternate?: string; noindex?: boolean }
+const { lang = 'zh', title, description = SITE.description[lang], section = 'home', alternate, noindex = false } = Astro.props;
+const u = t(lang);
+const pageTitle = title ? `${title} · PRIME Lab` : `PRIME Lab · ${SITE.name[lang]}`;
+const canonical = new URL(Astro.url.pathname, SITE.website).href;
+const otherPath = alternate ?? href(lang === 'zh' ? 'en' : 'zh', section === 'home' ? '' : section);
+const zh = lang === 'zh' ? canonical : new URL(otherPath, SITE.website).href;
+const en = lang === 'en' ? canonical : new URL(otherPath, SITE.website).href;
+---
+<!doctype html>
+<html lang={lang === 'zh' ? 'zh-CN' : 'en'}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#0a192e" />
+    {noindex && <meta name="robots" content="noindex,follow" />}
+    <title>{pageTitle}</title>
+    <link rel="canonical" href={canonical} />
+    <link rel="alternate" hreflang="zh-CN" href={zh} />
+    <link rel="alternate" hreflang="en" href={en} />
+    <link rel="alternate" hreflang="x-default" href={zh} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:site_name" content="PRIME Lab" />
+    <meta property="og:locale" content={lang === 'zh' ? 'zh_CN' : 'en_US'} />
+    <meta property="og:image" content={`${SITE.website}/og.png`} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script is:inline type="application/ld+json" set:html={JSON.stringify({ '@context': 'https://schema.org', '@type': 'ResearchOrganization', name: SITE.labName, alternateName: SITE.name.zh, url: SITE.website, description, parentOrganization: { '@type': 'CollegeOrUniversity', name: SITE.university[lang] }, sameAs: [SITE.github] }).replace(/</g, '\\u003c')} />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">{u.skip}</a>
+    <Header lang={lang} section={section} alternate={alternate} />
+    <main id="main" data-pagefind-body={noindex ? undefined : true} tabindex="-1"><slot /></main>
+    <footer class="site-footer">
+      <div class="container footer-main">
+        <div><a class="footer-brand" href={href(lang)}>PRIME<span> Lab</span><span class="dot">.</span></a><p>{SITE.name[lang]}<br />{SITE.university[lang]}</p></div>
+        <div class="footer-mission">Predictive Research in<br />Industrial Modeling and Energy</div>
+        <div class="footer-links"><a href={href(lang, 'research')}>{u.research} ↗</a><a href={href(lang, 'join')}>{u.join} ↗</a><a href={SITE.github}>GitHub ↗</a></div>
+      </div>
+      <div class="container footer-bottom"><span>© {new Date().getFullYear()} PRIME Lab</span><a href="https://github.com/fjd2004711/scholar-lite">Built on Scholar-Lite · MIT</a><span>XINJIANG UNIVERSITY</span></div>
+    </footer>
+  </body>
+</html>

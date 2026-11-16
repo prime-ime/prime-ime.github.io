@@ -1,0 +1,57 @@
+{
+  "name": "prime-lab",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "PRIME Lab · 新疆大学工业建模与能源预测研究组",
+  "license": "MIT",
+  "author": "PRIME Lab",
+  "homepage": "https://prime-ime.github.io",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/prime-ime/prime-ime.github.io.git"
+  },
+  "bugs": {
+    "url": "https://github.com/prime-ime/prime-ime.github.io/issues"
+  },
+  "keywords": [
+    "academic",
+    "scholar",
+    "website-template",
+    "astro",
+    "bibtex",
+    "research-lab",
+    "publication-list",
+    "tailwindcss"
+  ],
+  "engines": {
+    "node": ">=22.23.4"
+  },
+  "scripts": {
+    "dev": "npm run import-bibtex && astro dev",
+    "build": "npm run import-bibtex && astro build && pagefind --site dist",
+    "preview": "astro preview",
+    "check": "astro check",
+    "test": "node --test tests/*.test.mjs",
+    "verify": "npm run check && npm test && npm run build && node scripts/check-site.mjs",
+    "import-bibtex": "node scripts/import-bibtex.js",
+    "test:content": "node scripts/check-content.mjs"
+  },
+  "dependencies": {
+    "@astrojs/check": "^0.9.6",
+    "@astrojs/react": "^7.1.9",
+    "@tailwindcss/vite": "^4.1.17",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "astro": "^7.4.12",
+    "lucide-react": "^0.555.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "sharp": "^0.35.5",
+    "tailwindcss": "^4.1.17",
+    "typescript": "^5.9.3"
+  },
+  "devDependencies": {
+    "pagefind": "^1.4.0",
+    "@types/node": "^24.0.0"
+  }
+}

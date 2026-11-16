@@ -1,0 +1,10 @@
+---
+import { ArrowUpRight } from 'lucide-react';
+import { t, type Lang } from '../i18n/ui';
+interface Props { lang: Lang; title: string; body: string; compact?: boolean; link?: string; label?: string }
+const { lang, title, body, compact = false, link, label } = Astro.props;
+---
+<div class:list={['empty-state', {compact}]}>
+  <div class="empty-symbol" aria-hidden="true"><span></span><span></span><span></span></div>
+  <div><span class="eyebrow subtle">{t(lang).pending}</span><h3>{title}</h3><p>{body}</p>{link && <a class="text-link" href={link}>{label}<ArrowUpRight size={16}/></a>}</div>
+</div>
