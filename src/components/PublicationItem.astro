@@ -2,19 +2,34 @@
 import type { CollectionEntry } from 'astro:content';
 import { t, type Lang } from '../i18n/ui';
 import { ArrowUpRight } from 'lucide-react';
-interface Props { entry: CollectionEntry<'publications'>; lang: Lang }
-const { entry, lang } = Astro.props;
+interface Props { entry: CollectionEntry<'publications'>; lang: Lang; index?: number }
+const { entry, lang, index } = Astro.props;
 const {title, authors, year, venue, links, doi, bibtex} = entry.data;
 const u = t(lang);
 const displayVenue = venue.replace(new RegExp(`^${year}\\s+`), '');
 ---
 <article class="publication" id={entry.id}>
-  <div class="publication-index" aria-hidden="true">↗</div>
+  <div class="publication-index" aria-hidden="true">{index ? String(index).padStart(2, '0') : '↗'}</div>
   <div><div class="publication-meta">{displayVenue} <span> / {year}</span></div><h3>{title}</h3><p>{authors.join(', ')}</p>
     <div class="resource-links">
       {Object.entries(links).map(([key, url]) => url && <a href={url}>{key === 'pdf' ? u.paper : key === 'code' ? u.code : u.website}<ArrowUpRight size={13}/></a>)}
       {doi && <a href={`https://doi.org/${doi}`}>DOI <ArrowUpRight size={13}/></a>}
     </div>
-    {bibtex && <details class="citation"><summary>{u.bib}</summary><pre><code>{bibtex}</code></pre></details>}
+    {bibtex && <details class="citation"><summary>{u.bib}</summary><div class="citation-content"><div class="citation-tools" data-pagefind-ignore><span>BIBTEX</span><button type="button" class="copy-citation" hidden>复制引用</button><span class="copy-status" role="status"></span></div><pre><code>{bibtex}</code></pre></div></details>}
   </div>
 </article>
+<script>
+  if (navigator.clipboard?.writeText) {
+    document.querySelectorAll<HTMLButtonElement>('.copy-citation').forEach(button => {
+      button.hidden = false;
+      button.addEventListener('click', async () => {
+        const container = button.closest('.citation-content');
+        const status = container?.querySelector<HTMLElement>('.copy-status');
+        const text = container?.querySelector('code')?.textContent;
+        if (!text || !status) return;
+        try { await navigator.clipboard.writeText(text); status.textContent = '已复制'; }
+        catch { status.textContent = '复制未成功，请选择下方文本手动复制。'; }
+      });
+    });
+  }
+</script>

@@ -2,12 +2,13 @@
 import type { CollectionEntry } from 'astro:content';
 import { Image } from 'astro:assets';
 import { href, t, type Lang } from '../i18n/ui';
-interface Props { member: CollectionEntry<'team'>; lang: Lang }
-const { member, lang } = Astro.props;
+interface Props { member: CollectionEntry<'team'>; lang: Lang; featured?: boolean }
+const { member, lang, featured = false } = Astro.props;
 const {name, avatar, bio, email, translationKey} = member.data;
 ---
-<article class="team-card">
+<article class:list={['team-card', { 'team-featured': featured }]}>
   <a href={href(lang, `people/${translationKey}`)} class="portrait-link">{avatar ? <Image src={avatar} alt={name} width={480} format="webp" loading="lazy"/> : <span class="portrait-placeholder">{t(lang).imagePending}</span>}</a>
-  <h3><a href={href(lang, `people/${translationKey}`)}>{name}</a></h3>{bio && <p>{bio}</p>}
+  <div class="team-copy"><span class="eyebrow">{t(lang)[member.data.role === 'Faculty' ? 'faculty' : member.data.role === 'PhD Student' ? 'phd' : member.data.role === 'Master Student' ? 'master' : 'alumni']}</span><h3><a href={href(lang, `people/${translationKey}`)}>{name}</a></h3>{bio && <p>{bio}</p>}
   <div class="resource-links"><a href={href(lang, `people/${translationKey}`)}>查看完整介绍 →</a>{email && <a href={`mailto:${email}`}>{t(lang).email} ↗</a>}</div>
+  </div>
 </article>

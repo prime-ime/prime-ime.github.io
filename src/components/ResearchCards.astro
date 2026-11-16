@@ -1,9 +1,10 @@
 ---
 import type { CollectionEntry } from 'astro:content';
-import { Activity, Network, Workflow, ArrowUpRight } from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
+import ResearchVisual from './ResearchVisual.astro';
 import { href, t, type Lang } from '../i18n/ui';
 interface Props { entries: CollectionEntry<'research'>[]; lang: Lang }
 const { entries, lang } = Astro.props;
-const icons = [Workflow, Activity, Network];
+
 ---
-<div class="research-grid">{entries.map((entry, index) => { const Icon = icons[index % icons.length]; return <a class="research-card" href={href(lang, `research/${entry.data.translationKey}`)}><div class="card-top"><Icon size={30} strokeWidth={1.3}/><span>0{index+1}</span></div><p class="eyebrow">{entry.data.label}</p><h3>{entry.data.title}</h3><p class="card-description">{entry.data.description}</p><div class="card-bottom"><span>{t(lang).learn}</span><ArrowUpRight size={20}/></div></a>; })}</div>
+<div class="research-grid">{entries.map((entry, index) => { return <a class="research-card" href={href(lang, `research/${entry.data.translationKey}`)}><div class="card-top"><span>RESEARCH AREA</span><span>{String(index+1).padStart(2,'0')}</span></div><ResearchVisual theme={entry.data.translationKey}/><div class="research-card-copy"><p class="eyebrow">{entry.data.label}</p><h3>{entry.data.title}</h3><p class="card-description">{entry.data.description}</p><div class="research-tags">{entry.data.tags.map(tag => <span>{tag}</span>)}</div><div class="card-bottom"><span>{t(lang).learn}</span><ArrowUpRight size={20}/></div></div></a>; })}</div>

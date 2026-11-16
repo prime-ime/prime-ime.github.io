@@ -15,11 +15,12 @@ const canonical = new URL(Astro.url.pathname, SITE.website).href;
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
-    <meta name="theme-color" content="#0a192e" />
+    <meta name="theme-color" content="#10263f" />
     {noindex && <meta name="robots" content="noindex,follow" />}
     <title>{pageTitle}</title>
     <link rel="canonical" href={canonical} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preload" href="/fonts/Inter-Regular.woff" as="font" type="font/woff" crossorigin />
     <meta property="og:type" content="website" />
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
@@ -44,3 +45,29 @@ const canonical = new URL(Astro.url.pathname, SITE.website).href;
     </footer>
   </body>
 </html>
+<script>
+  // Animate only once, without hiding content before JS or requiring animation to read it.
+  const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+  if (!reducedMotion.matches && 'IntersectionObserver' in window) {
+    const animations = new Set<Animation>();
+    const observer = new IntersectionObserver(entries => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        observer.unobserve(entry.target);
+        const animation = entry.target.animate(
+          [{ opacity: .4, transform: 'translateY(16px)' }, { opacity: 1, transform: 'translateY(0)' }],
+          { duration: 550, easing: 'cubic-bezier(.2,.7,.3,1)' }
+        );
+        animations.add(animation);
+        animation.onfinish = () => animations.delete(animation);
+      }
+    }, { threshold: .08 });
+    document.querySelectorAll('[data-reveal]').forEach(element => observer.observe(element));
+    reducedMotion.addEventListener('change', event => {
+      if (!event.matches) return;
+      observer.disconnect();
+      animations.forEach(animation => animation.cancel());
+      animations.clear();
+    });
+  }
+</script>
