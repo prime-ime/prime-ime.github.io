@@ -4,12 +4,13 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { parseBibliography, importBibliography } from '../scripts/import-bibtex.js';
-const fixture = '@article{fixture2026, title={A {Test} "Title"}, author={Smith, Alice and {Research and Energy Group}}, year={2026}, journal={Test Venue}, doi={https://doi.org/10.0000/test}, code={https://example.org/code}, project={https://example.org/project}, featured={true}}';
+const fixture = '@article{fixture2026, title={A {Test} "Title"}, author={Smith, Alice and {Research and Energy Group}}, year={2026}, journal={Test Venue}, volume={304}, pages={1--12}, note={Early Access}, doi={https://doi.org/10.0000/test}, code={https://example.org/code}, project={https://example.org/project}, featured={true}}';
 test('imports names, protected text, links, DOI and explicit featured flag', () => {
  const [r] = parseBibliography(fixture);
  assert.deepEqual(r.data.authors,['Alice Smith','Research and Energy Group']);
  assert.equal(r.data.title,'A Test "Title"'); assert.equal(r.data.featured,true);
  assert.equal(r.data.doi,'10.0000/test'); assert.equal(r.data.links.website,'https://example.org/project');
+ assert.equal(r.data.volume,'304'); assert.equal(r.data.pages,'1--12'); assert.equal(r.data.note,'Early Access');
  assert.match(r.data.bibtex, /@article\{fixture2026/);
 });
 test('empty bibliography is valid; malformed and duplicate entries fail', () => {

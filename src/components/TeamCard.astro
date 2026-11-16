@@ -7,7 +7,7 @@ const { member, lang } = Astro.props;
 const {name, avatar, bio, website, email, translationKey} = member.data;
 ---
 <article class="team-card">
-  <a href={href(lang, `people/${translationKey}`)} class="portrait-link">{avatar ? <Image src={avatar} alt={name} width={480} height={480} format="webp" loading="lazy"/> : <span class="portrait-placeholder">{t(lang).imagePending}</span>}</a>
+  <a href={href(lang, `people/${translationKey}`)} class="portrait-link">{avatar ? <Image src={avatar} alt={name} width={480} format="webp" loading="lazy"/> : <span class="portrait-placeholder">{t(lang).imagePending}</span>}</a>
   <h3><a href={href(lang, `people/${translationKey}`)}>{name}</a></h3>{bio && <p>{bio}</p>}
   <div class="resource-links">{website && <a href={website}>{t(lang).profile} ↗</a>}{email && <a href={`mailto:${email}`}>{t(lang).email} ↗</a>}</div>
 </article>

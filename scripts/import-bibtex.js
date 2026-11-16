@@ -30,7 +30,7 @@ export function parseBibliography(source) {
     const links = Object.fromEntries(Object.entries({pdf:safeLink(tags.pdf || tags.url),code:safeLink(tags.code || tags.github),website:safeLink(tags.website || tags.project)}).filter(([,v]) => v));
     const doi = clean(tags.doi).replace(/^https?:\/\/(?:dx\.)?doi\.org\//i,'');
     const bibtex = `@${entry.entryType}{${key},\n${Object.entries(tags).map(([k,v]) => `  ${k} = {${v}}`).join(',\n')}\n}`;
-    return {key, data:{title:clean(tags.title), authors, year:Number(tags.year), venue, ...(doi ? {doi} : {}), links, featured:clean(tags.featured).toLowerCase() === 'true', bibtex}};
+    return {key, data:{title:clean(tags.title), authors, year:Number(tags.year), venue, ...Object.fromEntries(['volume','pages','note'].filter(k => clean(tags[k])).map(k => [k,clean(tags[k])])), ...(doi ? {doi} : {}), links, featured:clean(tags.featured).toLowerCase() === 'true', bibtex}};
   });
 }
 export function importBibliography(root = process.cwd()) {

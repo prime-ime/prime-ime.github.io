@@ -11,7 +11,7 @@ interface Props { lang: Lang }
 const { lang } = Astro.props;
 const u = t(lang);
 const {research, publications, news} = await getContent(lang);
-const featured = publications.filter(p => p.data.featured).slice(0,3);
+const featured = publications.filter(p => p.data.featured).slice(0,4);
 ---
 <section class="hero">
   <div class="container hero-grid">

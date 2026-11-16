@@ -38,7 +38,7 @@ const description = entry ? ('description' in entry.data ? entry.data.descriptio
 ---
 {entry && Content ? <Layout lang={lang} title={title} description={description} section={section} alternate={alternate}>
   <article class="container detail-page"><a class="text-link" href={href(lang,section)}>← {t(lang).back}</a><header><p class="eyebrow">{t(lang)[section]}</p><h1>{title}</h1>{'date' in entry.data && <time datetime={entry.data.date.toISOString()}>{entry.data.date.toISOString().slice(0,10)}</time>}<p class="detail-intro">{description}</p></header>
-  {'avatar' in entry.data && entry.data.avatar && <Image src={entry.data.avatar} alt={title} width={320} height={320} class="detail-avatar" format="webp"/>}
+  {'avatar' in entry.data && entry.data.avatar && <Image src={entry.data.avatar} alt={title} width={320} class="detail-avatar" format="webp"/>}
   <div class="prose"><Content/></div>
   {'website' in entry.data && entry.data.website && <a class="text-link" href={entry.data.website}>{t(lang).profile} ↗</a>}
   {'links' in entry.data && <div class="resource-links">{Object.entries(entry.data.links).map(([label,url]) => <a href={url}>{label} ↗</a>)}</div>}

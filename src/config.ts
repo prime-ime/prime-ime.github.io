@@ -10,10 +10,10 @@ export const SITE = {
   },
   github: 'https://github.com/prime-ime',
   repository: 'https://github.com/prime-ime/prime-ime.github.io',
-  // 填入已确认的公开联系方式；空值时页面明确显示“待公布”。
-  email: '',
+  // 公开工作邮箱及教师主页，经学院官网核实。
+  email: 'sul@xju.edu.cn',
   address: { zh: '', en: '' },
-  admissionsUrl: '',
+  admissionsUrl: 'https://it.xju.edu.cn/info/1144/3136.htm',
 };
 export const sections = ['research', 'publications', 'people', 'projects', 'news', 'join', 'search'] as const;
 export type Section = typeof sections[number] | 'home';
