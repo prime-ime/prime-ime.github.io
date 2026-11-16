@@ -26,8 +26,6 @@ export const ui = {
     joinTitle: '让好奇心，\n与真实问题相遇。', joinBody: '欢迎关注工业建模、能源预测及深度学习的同学了解我们的研究方向。具体招生信息以正式发布为准。',
     illustration: '工业能源预测概念示意，曲线为视觉表达，不代表实验数据。',
     contact: '联系与招生', email: '联系邮箱', address: '办公地址', unannounced: '待公布', admissions: '招生信息',
-    admissionNotice: '苏雷副教授招收计算机科学与技术、计算机技术专业硕士研究生。欢迎通过公开工作邮箱联系；具体名额、报名要求及时间以新疆大学当年正式招生通知为准。',
-    preparation: '了解我们的研究', preparationBody: '你可以先阅读研究方向，思考感兴趣的工业场景与建模问题；已发表论文及相关代码可在论文成果页面查看。',
     openSource: '开放资源', openSourceBody: '公开代码和可复用资源将在课题组 GitHub 组织中发布。',
     updatedSoon: '相关资料将在确认后更新。', imagePending: '照片待提供', noTranslation: '此条目尚未提供中文版本，以下保留原始内容。',
   },

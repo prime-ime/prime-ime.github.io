@@ -4,12 +4,13 @@ import { t, type Lang } from '../i18n/ui';
 import { ArrowUpRight } from 'lucide-react';
 interface Props { entry: CollectionEntry<'publications'>; lang: Lang }
 const { entry, lang } = Astro.props;
-const {title, authors, year, venue, volume, pages, note, links, doi, bibtex} = entry.data;
+const {title, authors, year, venue, links, doi, bibtex} = entry.data;
 const u = t(lang);
+const displayVenue = venue.replace(new RegExp(`^${year}\\s+`), '');
 ---
 <article class="publication" id={entry.id}>
   <div class="publication-index" aria-hidden="true">↗</div>
-  <div><div class="publication-meta">{venue}{volume && ` · ${volume}`}{pages && ` · ${pages.replace(/--/g, '–')}`}{note && ` · ${note}`} <span> / {year}</span></div><h3>{title}</h3><p>{authors.join(', ')}</p>
+  <div><div class="publication-meta">{displayVenue} <span> / {year}</span></div><h3>{title}</h3><p>{authors.join(', ')}</p>
     <div class="resource-links">
       {Object.entries(links).map(([key, url]) => url && <a href={url}>{key === 'pdf' ? u.paper : key === 'code' ? u.code : u.website}<ArrowUpRight size={13}/></a>)}
       {doi && <a href={`https://doi.org/${doi}`}>DOI <ArrowUpRight size={13}/></a>}

@@ -29,10 +29,11 @@ npm run test:content # 可选：在临时目录验证非空内容，不改正式
 
 | 内容 | 位置 |
 | --- | --- |
-| 名称、简介、邮箱、办公地址、招生链接 | `src/config.ts` |
+| 名称、简介、邮箱、办公地址、导师介绍入口 | `src/config.ts` |
 | 导航、按钮、空状态及首页中文文案 | `src/i18n/ui.ts` |
 | 研究方向 | `src/content/research/*.md` |
 | 导师、博士生、硕士生、毕业成员 | `src/content/team/*.md` |
+| 招生专业、培养理念、研究介绍与联系建议 | `src/content/join.md` |
 | 项目与资源 | `src/content/projects/*.md` |
 | 新闻动态 | `src/content/news/*.md` |
 | 论文来源 | 根目录 `citations.bib` |
@@ -90,7 +91,7 @@ bio: 待填写研究兴趣
 }
 ```
 
-必填 `title`、`author`、四位 `year`，以及 `journal` / `booktitle` / `publisher` / `howpublished` / `institution` 之一；可选 `volume`、`pages`、`note` 会显示卷号、页码或文章编号及 Early Access 等出版状态；其他字段可直接删除。`featured = {true}` 才会出现在首页代表性成果，不从备注猜测奖项。链接支持 `https://`、`http://` 或 `/files/...`；不要使用 Zotero 本机文件路径。
+必填 `title`、`author`、四位 `year`，以及 `journal` / `booktitle` / `publisher` / `howpublished` / `institution` 之一；可选 `volume`、`pages`、`note` 保留卷号、页码或文章编号及 Early Access 等出版状态，供 BibTeX 引用使用；页面摘要仅显示期刊或会议名称与年份；其他字段可直接删除。`featured = {true}` 才会出现在首页代表性成果，不从备注猜测奖项。链接支持 `https://`、`http://` 或 `/files/...`；不要使用 Zotero 本机文件路径。
 
 ```bash
 npm run import-bibtex
@@ -175,3 +176,9 @@ links: {}
 - 未将目录中的 AAAI、TIM 文稿纳入已发表列表；学生学位类别、在读或毕业状态需另行确认后再添加成员资料。
 
 - 科研项目依据学院主页“主持项目”栏目收录四项，保留原项目名称、类别、经费、期限及已公开编号；“参与项目”未纳入主持列表。
+
+## 站内介绍与招生内容
+
+教师完整介绍维护在 `src/content/team/lei-su.zh.md`，团队卡片优先链接本站详情。教育经历、研究兴趣、项目和培养介绍可直接在本站阅读；详情页底部保留学院资料来源。
+
+“加入我们”的正文维护在 `src/content/join.md`，公开邮箱和导师入口在 `src/config.ts`。联系建议不代表正式报考门槛，招生名额与时间只在取得当年官方通知后补充。

@@ -12,7 +12,7 @@ export const SITE = {
   // 公开工作邮箱及教师主页，经学院官网核实。
   email: 'sul@xju.edu.cn',
   address: { zh: '' },
-  admissionsUrl: 'https://it.xju.edu.cn/info/1144/3136.htm',
+  advisor: { name: '苏雷', profile: '/people/lei-su/', department: '计算机科学与技术学院' },
 };
 export const sections = ['research', 'publications', 'people', 'projects', 'news', 'join', 'search'] as const;
 export type Section = typeof sections[number] | 'home';
