@@ -1,9 +1,9 @@
 ---
-import { ArrowUpRight, ArrowRight } from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
 import { SITE } from '../config';
 import { href, t, type Lang } from '../i18n/ui';
 import { getContent } from '../lib/content';
-import EnergyVisual from './EnergyVisual.astro';
+import FieldPreview from './FieldPreview.astro';
 import ResearchCards from './ResearchCards.astro';
 import PublicationItem from './PublicationItem.astro';
 import EmptyState from './EmptyState.astro';
@@ -17,18 +17,21 @@ const faculty = team.find(member => member.data.role === 'Faculty');
 ---
 <section class="hero">
   <div class="container hero-grid">
-    <div class="hero-copy"><div class="hero-kicker"><span class="status-dot"></span> {SITE.university[lang]}<span class="kicker-divider">/</span> PRIME LAB</div>
-      <p class="hero-overline">MODELING TODAY. PREDICTING TOMORROW.</p>
-      <h1 class="hero-wordmark">PRIME<span> Lab</span><span class="wordmark-period">.</span><span class="hero-name">{SITE.name[lang]}</span></h1>
-      <p class="hero-statement">{u.heroLead.split('\n').map((line, i) => <span class:list={{accent:i === 1}}>{line}</span>)}</p>
+    <div class="hero-copy">
+      <p class="hero-affiliation">{SITE.university[lang]}<span aria-hidden="true">·</span>{SITE.advisor.department}</p>
+      <h1 class="hero-wordmark">
+        PRIME<span class="wordmark-lab"> Lab</span><span class="wordmark-period">.</span>
+        <span class="hero-name">{SITE.name[lang]}</span>
+      </h1>
       <p class="hero-description">{u.heroBody}</p>
-      <div class="hero-actions"><a class="button button-light" href={href(lang, 'research')}>{u.explore}<ArrowUpRight size={18}/></a><a class="hero-secondary" href={href(lang, 'publications')}>{u.publications}<ArrowRight size={17}/></a></div>
+      <div class="hero-actions">
+        <a class="button button-light" href={href(lang, 'research')}>{u.explore}</a>
+        <a class="hero-secondary" href={href(lang, 'publications')}>{u.publications}</a>
+      </div>
     </div>
-    <EnergyVisual lang={lang}/>
+    <FieldPreview/>
   </div>
-  <div class="container hero-bottom"><span>{SITE.fullName}</span><a href="#about" class="scroll-label">探索 PRIME <span aria-hidden="true">↓</span></a></div>
 </section>
-<div class="topic-strip"><div class="container"><span>INDUSTRIAL ENERGY</span><i>+</i><span>DEEP LEARNING</span><i>+</i><span>PHYSICS-INFORMED MODELING</span><i>+</i><span>TIME-SERIES FORECASTING</span></div></div>
 <section class="section about-section container" id="about" data-reveal>
   <div><span class="eyebrow"><span class="section-number">01 /</span> {u.aboutLabel}</span><h2 class="line-title">{u.aboutTitle}</h2></div>
   <div class="about-copy"><p>{u.aboutBody}</p><a class="text-link" href={href(lang, 'people')}>{u.people}<ArrowUpRight size={17}/></a></div>

@@ -1,0 +1,383 @@
+---
+import { Box, Pause, Play } from 'lucide-react';
+
+// The clip follows the simulation clock. Each still shows a representative moment.
+const stages = [
+  {
+    label: '稀疏观测',
+    image: '/media/field/sampling.webp',
+    start: 0,
+    sample: 0.55,
+  },
+  {
+    label: '连续重建',
+    image: '/media/field/reconstruction.webp',
+    start: 1.2,
+    sample: 3.4,
+  },
+  {
+    label: '未来预测',
+    image: '/media/field/prediction.webp',
+    start: 7,
+    sample: 8.4,
+  },
+];
+const initialStage = stages[1];
+---
+
+<figure class="field-preview" data-field-preview aria-labelledby="field-preview-title">
+  <figcaption class="field-heading">
+    <h2 id="field-preview-title">三维时空场重建与预测</h2>
+    <a class="field-demo-link" href="/demos/spatiotemporal-field.html">
+      <Box size={16} aria-hidden="true"/>交互演示
+    </a>
+  </figcaption>
+
+  <div class="field-panel">
+    <div class="field-scene" data-field-scene>
+      <img
+        src={initialStage.image}
+        alt="三维坐标网格中的模拟温度场，暖色表示较高温度。"
+        width="960"
+        height="560"
+        fetchpriority="high"
+        decoding="async"
+        data-field-poster
+      />
+      <video
+        data-src="/media/field/preview.mp4"
+        preload="none"
+        muted
+        playsinline
+        aria-hidden="true"
+      ></video>
+
+      <span class="field-label">概念演示</span>
+      <div class="field-scale" role="img" aria-label="温度色标，20 至 80 摄氏度">
+        <span aria-hidden="true">°C</span>
+        <span class="field-scale-values" aria-hidden="true">
+          <span class="field-ramp"></span>
+          <span><span>80</span><span>20</span></span>
+        </span>
+      </div>
+
+      <button class="field-play" data-field-play type="button" aria-label="播放动画" title="播放动画" hidden>
+        <Play className="field-play-icon" size={17} fill="currentColor" aria-hidden="true"/>
+        <Pause className="field-pause-icon" size={17} fill="currentColor" aria-hidden="true"/>
+      </button>
+      <p class="field-error" data-field-error role="status" hidden>动画暂时无法加载，仍可切换阶段查看静帧。</p>
+    </div>
+
+    <div class="field-stages" role="group" aria-label="演示阶段">
+      {stages.map(stage => (
+        <button
+          type="button"
+          class="field-stage"
+          aria-pressed={stage === initialStage ? 'true' : 'false'}
+          data-field-stage
+          data-start={stage.start}
+          data-sample={stage.sample}
+          data-image={stage.image}
+          disabled
+        >{stage.label}</button>
+      ))}
+    </div>
+  </div>
+</figure>
+
+<script>
+  const preview = document.querySelector('[data-field-preview]');
+
+  if (preview) {
+    const scene = preview.querySelector<HTMLElement>('[data-field-scene]')!;
+    const poster = preview.querySelector<HTMLImageElement>('[data-field-poster]')!;
+    const video = preview.querySelector('video')!;
+    const playButton = preview.querySelector<HTMLButtonElement>('[data-field-play]')!;
+    const errorNotice = preview.querySelector<HTMLElement>('[data-field-error]')!;
+    const stages = Array.from(preview.querySelectorAll<HTMLButtonElement>('[data-field-stage]'));
+    const motion = matchMedia('(prefers-reduced-motion: reduce)');
+    const data = matchMedia('(prefers-reduced-data: reduce)');
+    const desktop = matchMedia('(min-width: 900px) and (hover: hover) and (pointer: fine)');
+    const connection = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
+    const canPlay = Boolean(video.canPlayType('video/mp4'));
+    let activeStage = stages.find(stage => stage.getAttribute('aria-pressed') === 'true')!;
+    let nextStart: number | null = 0;
+    let autoplayPending = canPlay && desktop.matches && !motion.matches && !data.matches
+      && !connection?.saveData && 'IntersectionObserver' in window;
+    let posterReady = false;
+    let mostlyVisible = false;
+
+    function activateStage(stage: HTMLButtonElement) {
+      if (stage === activeStage) return;
+      activeStage.setAttribute('aria-pressed', 'false');
+      stage.setAttribute('aria-pressed', 'true');
+      activeStage = stage;
+    }
+
+    function showStill(stage: HTMLButtonElement) {
+      delete scene.dataset.videoVisible;
+      const image = stage.dataset.image!;
+      if (poster.getAttribute('src') !== image) poster.src = image;
+      activateStage(stage);
+    }
+
+    function updatePlaybackButton() {
+      const isPlaying = !video.paused && !video.ended;
+      const label = isPlaying ? '暂停动画' : '播放动画';
+      playButton.toggleAttribute('data-playing', isPlaying);
+      playButton.setAttribute('aria-label', label);
+      playButton.title = label;
+    }
+
+    function updateVideoStage() {
+      if (!scene.hasAttribute('data-video-visible')) return;
+      const stage = stages.findLast(step => video.currentTime >= Number(step.dataset.start));
+      if (stage) activateStage(stage);
+    }
+
+    function handlePlaybackError() {
+      video.pause();
+      showStill(activeStage);
+      if (video.hasAttribute('src')) {
+        video.removeAttribute('src');
+        video.load();
+      }
+      nextStart = Number(activeStage.dataset.sample);
+      errorNotice.hidden = false;
+      updatePlaybackButton();
+    }
+
+    async function playPreview(automatic = false) {
+      errorNotice.hidden = true;
+      video.muted = true;
+      if (!video.hasAttribute('src')) video.src = video.dataset.src!;
+      if (nextStart !== null || video.ended) video.currentTime = nextStart ?? 0;
+      nextStart = null;
+
+      try {
+        await video.play();
+      } catch (error) {
+        if (error instanceof DOMException && (error.name === 'AbortError'
+          || (automatic && error.name === 'NotAllowedError'))) return;
+        handlePlaybackError();
+      }
+    }
+
+    function maybeAutoplay() {
+      if (!autoplayPending || !posterReady || !mostlyVisible || document.hidden
+        || !desktop.matches || motion.matches || data.matches || connection?.saveData) return;
+      autoplayPending = false;
+      void playPreview(true);
+    }
+
+    stages.forEach(stage => {
+      stage.disabled = false;
+      stage.addEventListener('click', () => {
+        autoplayPending = false;
+        video.pause();
+        nextStart = Number(stage.dataset.sample);
+        errorNotice.hidden = true;
+        showStill(stage);
+      });
+    });
+
+    if (canPlay) {
+      playButton.hidden = false;
+      playButton.addEventListener('click', () => {
+        autoplayPending = false;
+        if (video.paused || video.ended) void playPreview();
+        else video.pause();
+      });
+      video.addEventListener('playing', () => {
+        if (video.paused) return;
+        scene.dataset.videoVisible = '';
+        updateVideoStage();
+      });
+      video.addEventListener('timeupdate', updateVideoStage);
+      video.addEventListener('error', handlePlaybackError);
+      for (const event of ['play', 'pause', 'ended']) {
+        video.addEventListener(event, updatePlaybackButton);
+      }
+
+      if ('IntersectionObserver' in window) {
+        const observer = new IntersectionObserver(([entry]) => {
+          mostlyVisible = entry.isIntersecting && entry.intersectionRatio >= .5;
+          if (!entry.isIntersecting) video.pause();
+          maybeAutoplay();
+        }, { threshold: [0, .5] });
+        observer.observe(scene);
+      }
+
+      if (autoplayPending) {
+        // Decode the first-paint image before fetching any video data.
+        void poster.decode().then(() => {
+          window.setTimeout(() => {
+            posterReady = true;
+            maybeAutoplay();
+          }, 650);
+        }).catch(() => undefined);
+      }
+
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) video.pause();
+        else maybeAutoplay();
+      });
+      window.addEventListener('pagehide', () => video.pause());
+      motion.addEventListener('change', () => {
+        if (!motion.matches) return;
+        autoplayPending = false;
+        video.pause();
+      });
+    }
+  }
+</script>
+
+<style>
+  .field-preview {
+    --field-line: #8eb7dc38;
+    min-width: 0;
+  }
+  .field-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: .25rem .75rem;
+    flex-wrap: wrap;
+    margin-bottom: .65rem;
+  }
+  .field-heading h2 {
+    font-size: clamp(1.0625rem, 1.55vw, 1.375rem);
+    letter-spacing: .025em;
+  }
+  .field-demo-link {
+    display: inline-flex;
+    align-items: center;
+    gap: .45rem;
+    min-height: 44px;
+    padding-inline: .7rem;
+    margin-inline-start: auto;
+    border: 1px solid var(--field-line);
+    border-radius: 6px;
+    color: #d0e2f5;
+    font-size: .875rem;
+    white-space: nowrap;
+    transition: border-color .2s, background .2s;
+  }
+  .field-demo-link:hover {
+    border-color: #a9c8e9a6;
+    background: #a9c8e91a;
+  }
+  .field-panel {
+    overflow: hidden;
+    border: 1px solid var(--field-line);
+    border-radius: 10px;
+    background: #101e30;
+  }
+  .field-scene {
+    position: relative;
+    isolation: isolate;
+    aspect-ratio: 12 / 7;
+    background: #0f1a2a;
+  }
+  .field-scene img, .field-scene video {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .field-scene video { opacity: 0; pointer-events: none; }
+  .field-scene[data-video-visible] video { opacity: 1; }
+  .field-label {
+    position: absolute;
+    inset: .9rem auto auto 1rem;
+    color: #aebfd2;
+    font-size: .8125rem;
+    letter-spacing: .04em;
+    pointer-events: none;
+  }
+  .field-scale {
+    position: absolute;
+    inset: 50% 1rem auto auto;
+    translate: 0 -50%;
+    display: grid;
+    gap: .4rem;
+    color: #ccdaed;
+    font: .75rem/1.1 ui-monospace, monospace;
+    pointer-events: none;
+  }
+  .field-scale-values {
+    display: flex;
+    gap: .35rem;
+    min-height: clamp(3.25rem, 8vw, 6.25rem);
+  }
+  .field-scale-values > span:last-child {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+  }
+  .field-ramp {
+    width: .35rem;
+    border-radius: 2px;
+    background: linear-gradient(to top, #2d46c8, #436dff 12%, #49b7ff 23%, #a4e3f8 35%, #f2e7b9 43%, #ffc071 53%, #ff8247 65%, #f54e36 80%, #e5334a);
+  }
+  .field-play {
+    position: absolute;
+    inset: auto auto .75rem 1rem;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 1px solid #a9c8e969;
+    border-radius: 6px;
+    background: #142438;
+    color: #e2edfb;
+  }
+  .field-play:hover { background: #223953; }
+  .field-play[hidden], .field-play[data-playing] .field-play-icon,
+  .field-play:not([data-playing]) .field-pause-icon { display: none; }
+  .field-error {
+    position: absolute;
+    inset: auto .75rem .75rem 4.4rem;
+    width: fit-content;
+    padding: .35rem .55rem;
+    border-radius: 4px;
+    background: #0b1522;
+    color: #ecf3fc;
+    font-size: .8125rem;
+  }
+  .field-stages {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    border-top: 1px solid var(--field-line);
+    background: #0c1827;
+  }
+  .field-stage {
+    position: relative;
+    min-height: 44px;
+    padding: .35rem .25rem;
+    color: #b0c1d5;
+    font-size: .875rem;
+    transition: color .2s, background .2s;
+  }
+  .field-stage + .field-stage { border-inline-start: 1px solid var(--field-line); }
+  .field-stage:disabled { cursor: default; }
+  .field-stage:hover:not(:disabled), .field-stage[aria-pressed="true"] {
+    background: #1a304a;
+    color: #ebf3ff;
+  }
+  .field-stage[aria-pressed="true"] { box-shadow: inset 0 2px #9ebfe9; }
+  .field-stage:last-child[aria-pressed="true"] { box-shadow: inset 0 2px #edaa78; }
+  .field-stage:focus-visible { outline-offset: -5px; }
+  @media (max-width: 520px) {
+    .field-demo-link { padding-inline: .5rem; }
+    .field-label { inset: .55rem auto auto .65rem; }
+    .field-scale { inset-inline-end: .65rem; }
+    .field-play { inset: auto auto .55rem .65rem; }
+  }
+  @media (max-width: 359px) {
+    .field-heading { column-gap: .4rem; }
+    .field-heading h2 { font-size: 1rem; }
+  }
+</style>
